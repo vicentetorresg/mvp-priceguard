@@ -4,7 +4,6 @@ import { NextResponse } from "next/server";
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 const TO = ["vicho.torresg@gmail.com", "jmvaldes321@gmail.com"];
-const TO_TEST = ["vicente.torres@proppi.cl"]; // solo para prueba hasta tener dominio verificado
 
 const products = [
   { name: "Samsung Galaxy A15 128GB", brand: "Samsung", minPrice: 299990, lowestDetected: 264990, totalListings: 18, violationsCount: 4, status: "critical" },
@@ -254,8 +253,8 @@ export async function POST() {
     const html = buildHtml(dateStr);
 
     const { data, error } = await resend.emails.send({
-      from: "PriceGuard <onboarding@resend.dev>",
-      to: TO_TEST,
+      from: "PriceGuard Alertas <notificaciones@proppi.cl>",
+      to: TO,
       subject: `🛡️ Reporte PriceGuard — ${dateStr} · 13 infracciones activas`,
       html,
     });
