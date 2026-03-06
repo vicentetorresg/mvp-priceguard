@@ -1,20 +1,27 @@
 "use client";
-import { useState } from "react";
-import { LayoutDashboard, Package, Bell, BarChart2, Settings, ShieldCheck, ChevronRight } from "lucide-react";
+import { LayoutDashboard, Package, Bell, BarChart2, Settings, ShieldCheck, ChevronRight, LogOut } from "lucide-react";
+import type { View } from "@/app/page";
+import { alerts } from "@/lib/mockData";
 
-const navItems = [
-  { icon: LayoutDashboard, label: "Dashboard", active: true },
-  { icon: Package, label: "Productos", active: false },
-  { icon: Bell, label: "Alertas", active: false, badge: 2 },
-  { icon: BarChart2, label: "Historial", active: false },
-  { icon: Settings, label: "Configuración", active: false },
+const navItems: { icon: React.ElementType; label: string; view: View; badge?: number }[] = [
+  { icon: LayoutDashboard, label: "Dashboard", view: "Dashboard" },
+  { icon: Package, label: "Productos", view: "Productos" },
+  { icon: Bell, label: "Alertas", view: "Alertas", badge: alerts.filter(a => !a.read).length },
+  { icon: BarChart2, label: "Historial", view: "Historial" },
+  { icon: Settings, label: "Configuración", view: "Configuracion" },
 ];
 
-export default function Sidebar() {
-  const [active, setActive] = useState("Dashboard");
-
+export default function Sidebar({
+  activeView,
+  onNav,
+  onLogout,
+}: {
+  activeView: View;
+  onNav: (v: View) => void;
+  onLogout: () => void;
+}) {
   return (
-    <aside className="w-60 min-h-screen bg-[#0f172a] flex flex-col">
+    <aside className="hidden md:flex w-60 min-h-screen bg-[#0f172a] flex-col shrink-0">
       {/* Logo */}
       <div className="px-6 py-5 border-b border-white/10">
         <div className="flex items-center gap-2">
@@ -30,7 +37,7 @@ export default function Sidebar() {
 
       {/* Brand pill */}
       <div className="px-4 py-3 border-b border-white/10">
-        <div className="bg-white/5 rounded-lg px-3 py-2 flex items-center justify-between cursor-pointer hover:bg-white/10 transition-colors">
+        <div className="bg-white/5 rounded-lg px-3 py-2 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded-full bg-[#FFE600] text-[#0f172a] text-xs font-bold flex items-center justify-center">S</div>
             <span className="text-sm text-white font-medium">Samsung Chile</span>
@@ -41,21 +48,21 @@ export default function Sidebar() {
 
       {/* Nav */}
       <nav className="flex-1 px-3 py-4 space-y-1">
-        {navItems.map(({ icon: Icon, label, badge }) => (
+        {navItems.map(({ icon: Icon, label, view, badge }) => (
           <button
-            key={label}
-            onClick={() => setActive(label)}
+            key={view}
+            onClick={() => onNav(view)}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
-              active === label
+              activeView === view
                 ? "bg-[#FFE600] text-[#0f172a]"
                 : "text-slate-400 hover:text-white hover:bg-white/5"
             }`}
           >
             <Icon className="w-4 h-4" strokeWidth={2} />
             <span className="flex-1 text-left">{label}</span>
-            {badge && (
+            {badge != null && badge > 0 && (
               <span className={`text-xs px-1.5 py-0.5 rounded-full font-bold ${
-                active === label ? "bg-[#0f172a] text-[#FFE600]" : "bg-red-500 text-white"
+                activeView === view ? "bg-[#0f172a] text-[#FFE600]" : "bg-red-500 text-white"
               }`}>
                 {badge}
               </span>
@@ -65,13 +72,20 @@ export default function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="px-4 py-4 border-t border-white/10">
+      <div className="px-4 py-4 border-t border-white/10 space-y-2">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-xs font-bold text-white">VT</div>
-          <div className="flex-1">
-            <p className="text-xs font-medium text-white">Vicente Torres</p>
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-xs font-bold text-white">JM</div>
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-medium text-white truncate">jmvaldes</p>
             <p className="text-[10px] text-slate-400">Admin</p>
           </div>
+          <button
+            onClick={onLogout}
+            className="w-7 h-7 rounded-lg hover:bg-white/10 flex items-center justify-center transition-colors"
+            title="Cerrar sesión"
+          >
+            <LogOut className="w-3.5 h-3.5 text-slate-400" />
+          </button>
         </div>
       </div>
     </aside>
