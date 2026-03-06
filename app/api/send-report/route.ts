@@ -1,7 +1,6 @@
 import { Resend } from "resend";
 import { NextResponse } from "next/server";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 const TO = ["vicho.torresg@gmail.com", "jmvaldes321@gmail.com"];
 
@@ -244,6 +243,7 @@ function buildHtml(date: string): string {
 }
 
 export async function POST() {
+  const resend = new Resend(process.env.RESEND_API_KEY);
   try {
     const now = new Date();
     const dateStr = now.toLocaleDateString("es-CL", {
